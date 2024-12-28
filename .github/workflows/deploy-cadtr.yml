@@ -71,6 +71,8 @@ jobs:
     - name: Debug git status
       run: |
         cd ./public-repo-cadtr
+        echo "/*" > .gitignore  # 忽略所有文件
+        git add .gitignore
         git status
 
     - name: Set up git remote with token and push changes (CADTR)
