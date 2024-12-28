@@ -34,6 +34,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: rainforeast/CADTR  # 公共仓库名称
+        token: ${{ secrets.WEB_TRY }}  # 使用个人访问令牌进行认证
         path: ./public-repo-cadtr
         ref: main  # 指定检出 main 分支
         clean: true  # 确保检出时清理旧文件
