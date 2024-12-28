@@ -84,7 +84,7 @@ jobs:
     - name: Set up git remote with token and push changes (CADTR)
       run: |
         cd ./public-repo-cadtr
-        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/CADTR.git
+        git remote set-url origin https://x-access-token:${{ secrets.WEB_TRY }}@github.com/CADTR.git
         git push -u origin main  # 推送到公共仓库的main分支，请根据实际情况调整
 
     - name: Debug remote URL
