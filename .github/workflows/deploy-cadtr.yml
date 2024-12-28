@@ -1,11 +1,9 @@
-name: Deploy CADTR Folder to Public Repo
+name: Deploy to GitHub Pages from Main Branch
 
 on:
   push:
-    paths:
-      - 'CADTR/**'  # 只触发当 CADTR 文件夹中的文件发生变化时
     branches:
-      - main  # 触发构建的分支
+      - main  # 触发条件：当 main 分支有推送时触发
 
 jobs:
   deploy:
@@ -16,70 +14,32 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: rainforeast/rainforeast.github.io  # 私有仓库名称
-        token: ${{ secrets.WEB_TRY }}  # 使用个人访问令牌进行认证
+        token: ${{ secrets.PRIVATE_REPO_TOKEN }}  # 使用个人访问令牌进行认证
         path: ./private-repo
-        clean: true  # 确保检出时清理旧文件
         fetch-depth: 0  # 获取所有历史记录，确保完整克隆
-        sparse-checkout-cone-mode: true
-        fetch-tags: false
-        lfs: false
-        submodules: false
-        set-safe-directory: true
 
-    - name: Debug private repo directory content
-      run: |
-        ls -la ./private-repo/CADTR/
-
-    - name: Checkout public repo (CADTR)
+    - name: Checkout public repo (for main branch)
       uses: actions/checkout@v3
       with:
         repository: rainforeast/CADTR  # 公共仓库名称
-        token: ${{ secrets.WEB_TRY }}  # 使用个人访问令牌进行认证
-        path: ./public-repo-cadtr
-        clean: true  # 确保检出时清理旧文件
-        fetch-depth: 0  # 获取所有历史记录，确保完整克隆
-        sparse-checkout-cone-mode: true
-        fetch-tags: false
-        lfs: false
-        submodules: false
-        set-safe-directory: true
+        path: ./public-repo
+        ref: main  # 指定检出 main 分支
 
-    - name: Debug public repo directory content
+    - name: Build static site
       run: |
-        ls -la ./public-repo-cadtr/
-
-    - name: Remove any nested directories from private repo
-      run: |
-        find ./private-repo -type d -name 'public-repo-cadtr' -exec rm -rf {} +
-
-    - name: Copy CADTR folder content to public repo
-      run: |
-        rsync -av --exclude='.git' --exclude='.github' --delete ./private-repo/CADTR/ ./public-repo-cadtr/
+        mkdir -p ./public-repo/
+        cp -r ./private-repo/CADTR/* ./public-repo/
 
     - name: Debug copied files in public repo
       run: |
-        ls -la ./public-repo-cadtr/
+        ls -la ./public-repo/
 
-    - name: Initialize git in public repo and commit changes (CADTR)
+    - name: Commit and push to main branch
       run: |
-        cd ./public-repo-cadtr
+        cd ./public-repo
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "Deploy CADTR folder from private repo" || echo "No changes to commit"
-
-    - name: Debug git status
-      run: |
-        cd ./public-repo-cadtr
-        git status
-
-    - name: Set up git remote with token and push changes (CADTR)
-      run: |
-        cd ./public-repo-cadtr
-        git remote set-url origin https://x-access-token:${{ secrets.WEB_TRY }}@github.com/rainforeast/CADTR.git
-        git push -u origin main  # 推送到公共仓库的main分支，请根据实际情况调整
-
-    - name: Debug remote URL
-      run: |
-        cd ./public-repo-cadtr
-        git remote -v
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+        git push origin main  # 推送到公共仓库的 main 分支
