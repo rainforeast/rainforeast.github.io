@@ -40,9 +40,13 @@ jobs:
         submodules: false
         set-safe-directory: true
 
+    - name: Remove any nested directories from private repo
+      run: |
+        find ./private-repo -type d -name 'public-repo-cadtr' -exec rm -rf {} +
+
     - name: Copy CADTR folder content to public repo
       run: |
-        rsync -av --delete ./private-repo/CADTR/ ./public-repo-cadtr/
+        rsync -av --exclude='.git' --exclude='.github' --delete ./private-repo/CADTR/ ./public-repo-cadtr/
 
     - name: Initialize git in public repo and commit changes (CADTR)
       run: |
