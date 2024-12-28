@@ -19,19 +19,25 @@ jobs:
         repository: rainforeast/CADTR  # 替换为你的公共仓库名称
         token: ${{ secrets.WEB_TRY }}  # 使用个人访问令牌进行认证
         path: ./public-repo
+        clean: true  # 确保检出时清理旧文件
         ssh-strict: true
-        persist-credentials: true
-        clean: true
+        persist-credentials: false  # 不保留凭据，避免潜在问题
+        fetch-depth: 0  # 获取所有历史记录，确保完整克隆
         sparse-checkout-cone-mode: true
-        fetch-depth: 1
         fetch-tags: false
         lfs: false
         submodules: false
         set-safe-directory: true
 
+    - name: Ensure no .git folder in public repo
+      run: |
+        if [ -d "./public-repo/.git" ]; then
+          rm -rf ./public-repo/.git
+        fi
+
     - name: Copy static files to public repo
       run: |
-        rsync -av --exclude='./public-repo/' ./ ./public-repo/
+        rsync -av --exclude='./public-repo/' --exclude='.git' ./ ./public-repo/
 
     - name: Commit and push only static files
       run: |
