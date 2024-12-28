@@ -49,7 +49,6 @@ jobs:
     - name: Initialize git in public repo and commit changes
       run: |
         cd ./public-repo
-        git init  # 重新初始化 Git 仓库
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
@@ -58,5 +57,5 @@ jobs:
     - name: Set up git remote with token and push changes
       run: |
         cd ./public-repo
-        git remote add origin https://x-access-token:${{ secrets.WEB_TRY }}@github.com/rainforeast/CADTR.git
+        git remote set-url origin https://x-access-token:${{ secrets.WEB_TRY }}@github.com/rainforeast/CADTR.git
         git push -u origin main  # 推送到公共仓库的main分支，请根据实际情况调整
