@@ -26,6 +26,10 @@ jobs:
         submodules: false
         set-safe-directory: true
 
+    - name: Debug private repo directory content
+      run: |
+        ls -la ./private-repo/CADTR/
+
     - name: Checkout public repo (CADTR)
       uses: actions/checkout@v3
       with:
@@ -42,14 +46,7 @@ jobs:
 
     - name: Debug public repo directory content
       run: |
-        ls -la ./public-repo-cadtr
-
-    - name: Ensure .git directory exists in public repo
-      run: |
-        if [ ! -d "./public-repo-cadtr/.git" ]; then
-          echo "Error: .git directory not found in public repo"
-          exit 1
-        fi
+        ls -la ./public-repo-cadtr/
 
     - name: Remove any nested directories from private repo
       run: |
@@ -59,6 +56,10 @@ jobs:
       run: |
         rsync -av --exclude='.git' --exclude='.github' --delete ./private-repo/CADTR/ ./public-repo-cadtr/
 
+    - name: Debug copied files in public repo
+      run: |
+        ls -la ./public-repo-cadtr/
+
     - name: Initialize git in public repo and commit changes (CADTR)
       run: |
         cd ./public-repo-cadtr
@@ -67,8 +68,18 @@ jobs:
         git add .
         git commit -m "Deploy CADTR folder from private repo" || echo "No changes to commit"
 
+    - name: Debug git status
+      run: |
+        cd ./public-repo-cadtr
+        git status
+
     - name: Set up git remote with token and push changes (CADTR)
       run: |
         cd ./public-repo-cadtr
         git remote set-url origin https://x-access-token:${{ secrets.WEB_TRY }}@github.com/rainforeast/CADTR.git
         git push -u origin main  # 推送到公共仓库的main分支，请根据实际情况调整
+
+    - name: Debug remote URL
+      run: |
+        cd ./public-repo-cadtr
+        git remote -v
