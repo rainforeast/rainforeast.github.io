@@ -20,8 +20,6 @@ jobs:
         token: ${{ secrets.WEB_TRY }}  # 使用个人访问令牌进行认证
         path: ./public-repo
         clean: true  # 确保检出时清理旧文件
-        ssh-strict: true
-        persist-credentials: false  # 不保留凭据，避免潜在问题
         fetch-depth: 0  # 获取所有历史记录，确保完整克隆
         sparse-checkout-cone-mode: true
         fetch-tags: false
