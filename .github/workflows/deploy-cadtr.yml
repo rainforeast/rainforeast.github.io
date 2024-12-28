@@ -40,6 +40,17 @@ jobs:
         submodules: false
         set-safe-directory: true
 
+    - name: Debug public repo directory content
+      run: |
+        ls -la ./public-repo-cadtr
+
+    - name: Ensure .git directory exists in public repo
+      run: |
+        if [ ! -d "./public-repo-cadtr/.git" ]; then
+          echo "Error: .git directory not found in public repo"
+          exit 1
+        fi
+
     - name: Remove any nested directories from private repo
       run: |
         find ./private-repo -type d -name 'public-repo-cadtr' -exec rm -rf {} +
