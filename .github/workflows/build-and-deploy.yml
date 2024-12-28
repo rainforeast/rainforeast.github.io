@@ -44,5 +44,5 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "Deploy from private repo" || echo "No changes to commit"
-        git remote set-url origin https://${{ secrets.WEB_TRY }}@github.com/rainforeast/rainforeast.github.io.git
+        git remote set-url origin https://${{ secrets.WEB_TRY }}@github.com/rainforeast/CADTR.git
         git push origin main  # 推送到公共仓库的main分支
