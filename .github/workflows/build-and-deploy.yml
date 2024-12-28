@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: rainforeast/CADTR  # 替换为你的公共仓库名称
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # 使用个人访问令牌进行认证
+        token: ${{ secrets.WEB_TRY }}  # 使用个人访问令牌进行认证
         path: ./public-repo
 
     - name: Copy static files to public repo
